@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: balance_service_db
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "balance_service"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - db:/var/lib/postgresql/data      
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d balance_service"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s 
