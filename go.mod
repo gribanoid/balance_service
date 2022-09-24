@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/jackc/pgx/v4 v4.17.2
-	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/pkg/errors v0.8.1
 )
 

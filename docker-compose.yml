@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  balance-service:
+    container_name: balance-service-db
+    build: ./
+    command: ./wait-for-postgres.sh db ./todo-app
+    ports:
+      - 80:8080
+    depends_on:
+      - db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d balance_service" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  db:
+    container_name: balance_service_db
+    restart: always
+    image: postgres:latest
+    volumes:
+      - ./.database/postgres/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
