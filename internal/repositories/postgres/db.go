@@ -37,7 +37,6 @@ func NewPgxPool(ctx context.Context, connString string, logLevel pgx.LogLevel) (
 	if err != nil {
 		return nil, errors.WithMessagef(err, "pgx connection error")
 	}
-
 	return &PGConnPool{
 		pool: pool,
 	}, nil

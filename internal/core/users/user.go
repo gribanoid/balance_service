@@ -9,40 +9,37 @@ var (
 type IUser interface {
 	GetBalance() int
 	Withdrawal(amount int) error
-	Deposit(amount int) error
-	Send(userID int, amount int) error
+	Deposit(amount int)
+	Convert() *User
 }
 
 var _ = (IUser)(&User{})
 
 type User struct {
-	ID     int
-	UserID string
-	Amount int
+	ID      int    `json:"id" db:"id"`
+	UserID  string `json:"user_id" db:"user_id"`
+	Balance int    `json:"balance" db:"balance"`
 }
 
 func NewUser(userID string) *User {
 	return &User{UserID: userID}
 }
 
-func (b *User) GetBalance() int {
-	return b.Amount
+func (u *User) GetBalance() int {
+	return u.Balance
 }
-func (b *User) Withdrawal(amount int) error {
-	if amount > b.GetBalance() {
+func (u *User) Withdrawal(amount int) error {
+	if amount > u.GetBalance() {
 		return NotEnoughMoney
 	}
-	b.Amount -= amount
+	u.Balance -= amount
 	return nil
 }
-func (b *User) Deposit(amount int) error {
-	b.Amount += amount
-	return nil
+func (u *User) Deposit(amount int) {
+	u.Balance += amount
+	return
 }
-func (b *User) Send(userID int, amount int) error {
-	if amount > b.GetBalance() {
-		return NotEnoughMoney
-	}
-	b.Amount -= amount
-	return nil
+
+func (u *User) Convert() *User {
+	return u
 }
