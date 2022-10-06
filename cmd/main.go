@@ -42,15 +42,15 @@ func main() {
 		log.Fatalf("failed to init tron service: %v\n", err)
 	}
 	fmt.Println("ready to accept requests")
-
-	http.HandleFunc("/docker", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/docker", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "hello from docker")
 	})
-	http.HandleFunc("/user/create", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/user/create", func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
 		err = userService.CreateUser(mainCtx, userID)
 	})
-	http.HandleFunc("/user/balance", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/user/balance", func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
 		balance, err := userService.GetBalance(mainCtx, userID)
 		if err != nil {
@@ -58,7 +58,7 @@ func main() {
 		}
 		fmt.Fprintf(w, "баланс пользователя %v", balance)
 	})
-	http.HandleFunc("/user/deposit", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/user/deposit", func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
 		amount := r.URL.Query().Get("amount")
 		a, err := strconv.ParseInt(amount, 10, 64)
@@ -71,7 +71,7 @@ func main() {
 		}
 		fmt.Fprintf(w, "success deposit")
 	})
-	http.HandleFunc("/user/withdrawal", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/user/withdrawal", func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
 		amount := r.URL.Query().Get("amount")
 		a, err := strconv.ParseInt(amount, 10, 64)
@@ -84,9 +84,9 @@ func main() {
 		}
 		fmt.Fprintf(w, "success deposit")
 	})
-	http.HandleFunc("/user/send", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/user/send", func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
 		userService.CreateUser(mainCtx, userID)
 	})
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", mux)
 }
